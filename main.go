@@ -47,6 +47,7 @@ func main() {
 	if nook == nil {
 		panic("nook not found")
 	}
+	nook.SetTrigger(actions.OnMotionDetect(nook, 255))
 	nook.SetTrigger(actions.OffAfterOn(nook, 20*time.Second))
 	// go actions.OffAfterResetMotion(context.Background(), nook, 15*time.Second)
 	for {

@@ -47,7 +47,7 @@ func OffAfterResetMotion(ctx context.Context, load libplum.LogicalLoad, dur time
 	load.ClearTrigger(&resetDelay)
 }
 
-// OffAfterOn is a trigger to autamatically turn the light off some duration
+// OffAfterOn returns a trigger to autamatically turn the light off some duration
 // after it was turned on. Motion resets the countdown timer
 func OffAfterOn(load libplum.LogicalLoad, dur time.Duration) libplum.TriggerFn {
 	oao := func(ev libplumraw.Event) {
@@ -60,4 +60,20 @@ func OffAfterOn(load libplum.LogicalLoad, dur time.Duration) libplum.TriggerFn {
 		}
 	}
 	return &oao
+}
+
+// OnMotionDetect returns a trigger that automatically turns the light on when
+// it detects motion. Set level to the desired power level (<=255)
+func OnMotionDetect(load libplum.LogicalLoad, level int) libplum.TriggerFn {
+	omd := func(ev libplumraw.Event) {
+		// TODO only trigger if the light isn't already on
+		switch ev := ev.(type) {
+		case libplumraw.LPEPIRSignal:
+			if ev.Signal > 10 {
+				fmt.Printf("Light detected motion! Turning on...\n")
+				load.SetLevel(level)
+			}
+		}
+	}
+	return &omd
 }
