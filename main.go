@@ -74,17 +74,35 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	time.Sleep(5 * time.Second)
-	house.Update()
-	time.Sleep(5 * time.Second)
+	// make sure we keep the house up to date
+	go func() {
+		tick := time.NewTicker(30 * time.Second).C
+		for {
+			select {
+			case <-tick:
+				house.Update()
+			}
+		}
+	}()
 	// spew.Dump(house)
-	nook, err := house.GetLoadByName("Nook")
-	if err, ok := err.(libplum.ENotFound); ok {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	if err != nil {
-		panic(err)
+	// spin until we find the room; it takes a few moments to initialize
+	var nook libplum.LogicalLoad
+	for {
+		nook, err = house.GetLoadByName("Nook")
+		if err != nil {
+			if _, ok := err.(*libplum.ENotFound); ok {
+				time.Sleep(100 * time.Millisecond)
+				continue
+			}
+			logrus.Error(err)
+		}
+		if nook == nil {
+			logrus.WithField("error", err).Debug("nook nil but no enotfound")
+			time.Sleep(100 * time.Millisecond)
+			continue
+		}
+		logrus.WithField("load", nook).Info("found load")
+		break
 	}
 	nook.SetTrigger(actions.OnMotionDetect(nook, 255))
 	nook.SetTrigger(actions.OffAfterOn(nook, 20*time.Second))
