@@ -13,7 +13,8 @@ import (
 // Define triggers, express behaviors, etc. Then add them to the main plumd to
 // get run.
 
-// OffAfter turns off a light some amount of time after it has been turned on.
+// OffAfter turns off the light handed to it some amount of time after a light
+// has been turned on. (They don't need to be the same light)
 func OffAfter(ctx context.Context, load libplum.LogicalLoad, dur time.Duration) {
 	fmt.Printf("starting timer, will shut off at %s\n", time.Now().Add(dur))
 	// selecting on the context so the caller can cancel the auto-off
