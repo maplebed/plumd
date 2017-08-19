@@ -78,3 +78,42 @@ func OnMotionDetect(load libplum.LogicalLoad, level int) libplum.TriggerFn {
 	}
 	return &omd
 }
+
+// Rainbow returns a trigger that, on motion detection, sends the glow ring
+// through a rainbow for 30 seconds
+// sadly doesn't work quite yet - panics when trying to get a pad's load ID
+// func Rainbow(pads libplum.Lightpads) libplum.TriggerFn {
+//  rain := func(ev libplumraw.Event) {
+//      wg := sync.WaitGroup{}
+//      for _, pad := range pads {
+//          wg.Add(1)
+//          go func(pad libplum.Lightpad) {
+//              glow := libplumraw.ForceGlow{
+//                  LLID:      pad.GetLoadID(),
+//                  Intensity: 1.0,
+//                  Timeout:   3000,
+//              }
+//              mod := func(i float64) {
+//                  glow.Red = int(math.Sin(0.1*i+0)*127 + 128)
+//                  glow.Blue = int(math.Sin(0.2*i+1)*127 + 128)
+//                  glow.Green = int(math.Sin(0.3*i+2)*127 + 128)
+//              }
+//              // go psychedelic
+//              for i := 0.0; i < 60; i++ {
+//                  mod(i)
+//                  go pad.SetGlow(glow)
+//                  time.Sleep(500 * time.Millisecond)
+//              }
+//              // and fade to black
+//              for i := 0.0; i < 10; i++ {
+//                  glow.Intensity -= 0.1
+//                  go pad.SetGlow(glow)
+//                  time.Sleep(800 * time.Millisecond)
+//              }
+//              wg.Done()
+//          }(pad)
+//      }
+
+//  }
+//  return &rain
+// }

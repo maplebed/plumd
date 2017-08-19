@@ -106,6 +106,7 @@ func main() {
 	}
 	nook.SetTrigger(actions.OnMotionDetect(nook, 255))
 	nook.SetTrigger(actions.OffAfterOn(nook, 20*time.Second))
+	// nook.SetTrigger(actions.Rainbow(nook.GetLightpads()))
 	// go actions.OffAfterResetMotion(context.Background(), nook, 15*time.Second)
 	for {
 		fmt.Printf(".")
